@@ -94,5 +94,5 @@ def delete_student(id):
     cur.close()  # Cierra el cursor
     return redirect(url_for('index'))  # Redirige a la página principal
 
-if __name__ == '__main__':  # Verifica si el archivo se está ejecutando directamente
-    app.run(debug=True)  # Inicia la aplicación Flask en modo debug
+if __name__ == '__main__':
+    app.run(debug=True)  # Solo para desarrollo local
