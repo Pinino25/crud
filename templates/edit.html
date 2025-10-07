@@ -1,0 +1,37 @@
+<!DOCTYPE html> <!-- Indica que el documento es HTML5 -->
+<html lang="es"> <!-- Define el idioma de la página como español -->
+<head>
+    <meta charset="UTF-8"> <!-- Establece la codificación de caracteres a UTF-8 -->
+    <title>Editar Estudiante</title> <!-- Título de la pestaña del navegador -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> <!-- Importa Bootstrap para estilos -->
+</head>
+<body>
+    <div class="container"> <!-- Contenedor principal de Bootstrap -->
+        <h1>Editar Estudiante</h1> <!-- Título principal de la página -->
+        <form action="/update_student/{{ estudiante[0] }}" method="POST"> <!-- Formulario para actualizar estudiante, usa la matrícula como identificador -->
+            <div class="form-group">
+                <label for="matricula">Matrícula:</label> <!-- Etiqueta para el campo matrícula -->
+                <input type="text" class="form-control" id="matricula" name="matricula" value="{{ estudiante[0] }}" readonly> <!-- Campo de matrícula, solo lectura -->
+            </div>
+            <div class="form-group">
+                <label for="nombre">Nombre:</label> <!-- Etiqueta para el campo nombre -->
+                <input type="text" class="form-control" id="nombre" name="nombre" value="{{ estudiante[1] }}" required> <!-- Campo de nombre, valor actual y requerido -->
+            </div>
+            <div class="form-group">
+                <label for="grupo">Grupo:</label> <!-- Etiqueta para el campo grupo -->
+                <input type="text" class="form-control" id="grupo" name="grupo" value="{{ estudiante[2] }}" required> <!-- Campo de grupo, valor actual y requerido -->
+            </div>
+            <div class="form-group">
+                <label for="edad">Edad:</label> <!-- Etiqueta para el campo edad -->
+                <input type="number" class="form-control" id="edad" name="edad" value="{{ estudiante[3] }}" required> <!-- Campo de edad, valor actual y requerido -->
+            </div>
+            <div class="form-group">
+                <label for="direccion">Dirección:</label> <!-- Etiqueta para el campo dirección -->
+                <input type="text" class="form-control" id="direccion" name="direccion" value="{{ estudiante[4] }}" required> <!-- Campo de dirección, valor actual y requerido -->
+            </div>
+            <button type="submit" class="btn btn-primary">Actualizar Estudiante</button> <!-- Botón para enviar el formulario de actualización -->
+        </form>
+    </div>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> <!-- Importa el JS de Bootstrap -->
+</body>
+</html>
