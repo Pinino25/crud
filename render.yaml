@@ -1,7 +1,7 @@
 services:
   - type: web
     name: crud-flask
-    runtime: python  # Especifica el runtime correcto
+    runtime: python
     buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
     plan: free
