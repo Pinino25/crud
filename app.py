@@ -1,16 +1,16 @@
-import os
 from flask import Flask, render_template, request, redirect, url_for
-from flask_sqlalchemy import SQLAlchemy
+from flask_mysqldb import MySQL
 
-app = Flask(__name__)
+app = Flask(__name__)  # Corregido: usar __name__
 
-database_url = os.environ.get('DATABASE_URL')
-if database_url and database_url.startswith('postgres://'):
-    database_url = database_url.replace('postgres://', 'postgresql://', 1)
+# Configuración de la base de datos MySQL
+app.config['MYSQL_HOST'] = '127.0.0.1'   # usar 127.0.0.1 evita problemas con sockets en Windows
+app.config['MYSQL_PORT'] = 3306          # puerto como entero
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = ''  # Cambiar si tienes contraseña
+app.config['MYSQL_DB'] = 'datos_esc'
 
-app.config['SQLALCHEMY_DATABASE_URI'] = database_url or 'mysql+pymysql://root:@127.0.0.1:3306/datos_esc'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-db = SQLAlchemy(app)
+mysql = MySQL(app)
 
 # Ruta principal - Listar datos
 @app.route('/')
@@ -18,8 +18,11 @@ def index():
     """
     Muestra la lista de estudiantes desde la base de datos.
     """
-    estudiantes = db.session.execute("SELECT * FROM estudiantes").fetchall()
-    return render_template('index.html', estudiantes=estudiantes)
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM estudiantes")  # Asegúrate de que la tabla se llame 'estudiantes'
+    data = cur.fetchall()
+    cur.close()
+    return render_template('index.html', estudiantes=data)
 
 # Ruta para añadir un nuevo estudiante
 @app.route('/add_student', methods=['POST'])
@@ -34,10 +37,11 @@ def add_student():
         edad = request.form['edad']
         direccion = request.form['direccion']
 
-        db.session.execute("""
-            INSERT INTO estudiantes (matricula, nombre, grupo, edad, direccion) VALUES (%s, %s, %s, %s, %s)
-        """, (matricula, nombre, grupo, edad, direccion))
-        db.session.commit()
+        cur = mysql.connection.cursor()
+        cur.execute("INSERT INTO estudiantes (matricula, nombre, grupo, edad, direccion) VALUES (%s, %s, %s, %s, %s)",
+                    (matricula, nombre, grupo, edad, direccion))
+        mysql.connection.commit()
+        cur.close()
         return redirect(url_for('index'))
 
 # Ruta para obtener un estudiante por su ID y mostrar el formulario de edición
@@ -46,8 +50,12 @@ def get_student(id):
     """
     Obtiene los datos de un estudiante por su ID para mostrar en el formulario de edición.
     """
-    estudiante = db.session.execute("SELECT * FROM estudiantes WHERE matricula = %s", (id,)).fetchone()
-    return render_template('edit.html', estudiante=estudiante)
+    cur = mysql.connection.cursor()
+    cur.execute("SELECT * FROM estudiantes WHERE matricula = %s", (id,))
+    data = cur.fetchall()
+    cur.close()
+    print(data[0])
+    return render_template('edit.html', estudiante=data[0])
 
 # Ruta para actualizar un estudiante
 @app.route('/update_student/<string:id>', methods=['POST'])
@@ -62,7 +70,8 @@ def update_student(id):
         edad = request.form['edad']
         direccion = request.form['direccion']
 
-        db.session.execute("""
+        cur = mysql.connection.cursor()
+        cur.execute("""
             UPDATE estudiantes
             SET nombre = %s,
                 grupo = %s,
@@ -70,7 +79,8 @@ def update_student(id):
                 direccion = %s
             WHERE matricula = %s
         """, (nombre, grupo, edad, direccion, id))
-        db.session.commit()
+        mysql.connection.commit()
+        cur.close()
         return redirect(url_for('index'))
 
 # Ruta para eliminar un estudiante
@@ -79,9 +89,11 @@ def delete_student(id):
     """
     Elimina un estudiante de la base de datos.
     """
-    db.session.execute("DELETE FROM estudiantes WHERE matricula = %s", (id,))
-    db.session.commit()
+    cur = mysql.connection.cursor()
+    cur.execute("DELETE FROM estudiantes WHERE matricula = %s", (id,))
+    mysql.connection.commit()
+    cur.close()
     return redirect(url_for('index'))
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # Corregido: usar __main__
     app.run(debug=True)
