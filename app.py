@@ -6,9 +6,9 @@ app = Flask(__name__)  # Corregido: usar __name__
 # Configuración de la base de datos MySQL
 app.config['MYSQL_HOST'] = '127.0.0.1'   # usar 127.0.0.1 evita problemas con sockets en Windows
 app.config['MYSQL_PORT'] = 3306          # puerto como entero
-app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_USER'] = 'Programando25'
 app.config['MYSQL_PASSWORD'] = ''  # Cambiar si tienes contraseña
-app.config['MYSQL_DB'] = 'datos_esc'
+app.config['MYSQL_DB'] = 'Programando25'
 
 mysql = MySQL(app)
 
